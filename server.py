@@ -27,8 +27,9 @@ def handle_client(connection, address):
             if message == '!disconnect':
                 connected = False
         
-            print(f'[{address}] {message}')
-    connection.closed()
+            print(f'[{address}] said: {message}')
+
+    connection.close()
 
 def start():
     server.listen()
@@ -37,7 +38,7 @@ def start():
         connection,address = server.accept()
         thread = threading.Thread(target=handle_client,args=(connection,address))
         thread.start()
-        print(f'[ACTIVE CONNECTIONS]{threading.active_count()-1}')
-    
+        print(f'\n[ACTIVE CONNECTIONS] {threading.active_count()-1}')
+
 print('[STARTING] server is starting')
 start()

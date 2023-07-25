@@ -22,4 +22,10 @@ def send_message(msg):
     client.send(send_length)
     client.send(message)
 
-send_message('Hello')
+def enter_message():
+    index = 0
+    while True:
+        msg = input(f'[ENTER MESSAGE {index}]: ')
+        send_message(msg)
+        index +=1 
+enter_message()
