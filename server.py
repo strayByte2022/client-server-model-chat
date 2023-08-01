@@ -1,18 +1,18 @@
 import socket
 import threading
-import time
 
 HEADER = 64 
-PORT = 3472 # netstat -ano -> choose listening ports
+# netstat -ano -> choose listening ports
 # automatically get the addr that the host run on
 host_name = socket.gethostname()
 SERVER = socket.gethostbyname(host_name) 
+PORT = 50445
 ADDR = (SERVER,PORT)
 FORMAT = 'utf-8'
 
 # bind address to socket
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #streaming data through ipv4
-server.bind(ADDR)
+server.bind(ADDR) 
 
 
 def handle_client(connection, address):
@@ -28,7 +28,7 @@ def handle_client(connection, address):
                 connected = False
         
             print(f'[{address}] said: {message}')
-
+    print(f'[DISCONNECTED] {address} disconnected')
     connection.close()
 
 def start():
@@ -40,5 +40,7 @@ def start():
         thread.start()
         print(f'\n[ACTIVE CONNECTIONS] {threading.active_count()-1}')
 
-print('[STARTING] server is starting')
-start()
+
+if __name__ == '__main__':
+    print(f'[STARTING] server is starting on port {PORT}')
+    start()
