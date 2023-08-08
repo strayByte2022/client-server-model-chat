@@ -41,8 +41,11 @@ def enter_message():
     
     while True:
         msg = input('>>')
-    
-        send_message(msg)
+        if msg.startswith('!private '):
+            recipient_username, private_msg = msg[len('!private '):].split(' ',1)
+            send_message(f'!private {recipient_username} {private_msg}')
+        else:
+            send_message(msg)
         if msg == '!bye':
             break
 
