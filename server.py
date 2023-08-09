@@ -31,7 +31,8 @@ def send_private_message(sender_address, recipient_address,message):
                 recipient_connection = client_info['connection']
                 private_message = f'[PRIVATE MESSAGE from {clients[sender_address]["username"]}]: {message}'
                 send_message_to_clients(recipient_connection,private_message)
-                send_message_to_clients(clients[sender_address]['connection'],f'[PRIVATE MESSAGE to {recipient_address}]: {message}')
+                # notification to sender that message sent (redundant)
+                # send_message_to_clients(clients[sender_address]['connection'],f'[PRIVATE MESSAGE to {recipient_address}]: {message}')
                 break
 
     pass            
