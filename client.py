@@ -4,17 +4,17 @@ import threading
 import sys
 HEADER = 1024
  # netstat -ano -> choose listening ports
-
+lock = threading.Lock()
 host_name = socket.gethostname() # automatically get the addr that the host run on
 SERVER = socket.gethostbyname(host_name) 
-PORT = 50446
+PORT = 50445
 ADDR = (SERVER,PORT)
 FORMAT = 'utf-8'
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((SERVER,50445)) # in the case of 2 diff hosts, find address by ipconfig, be sure to be on the same port
-
-def print_avail_message():
+def print_avail_message(stop_event):
+    with lock:
         while True: 
        
             message_length = client.recv(HEADER).decode(FORMAT)
@@ -35,9 +35,9 @@ def send_message(msg):
     client.send(message)
 
 def enter_message():
-    receive_thread = threading.Thread(target=print_avail_message)
+    stop_event = threading.Event()
+    receive_thread = threading.Thread(target=print_avail_message,args=(stop_event,))
     receive_thread.start()
-       
     
     while True:
         msg = input('>>')
@@ -47,8 +47,12 @@ def enter_message():
         else:
             send_message(msg)
         if msg == '!bye':
+            stop_event.set()
             break
 
+    receive_thread.join()
+    client.close()
+    sys.exit()            
 def enter_username():
     while True:
         username = input('Enter username: ')
@@ -62,3 +66,4 @@ def enter_username():
 if __name__ == '__main__':
     enter_username()
     enter_message()
+    
