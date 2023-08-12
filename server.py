@@ -22,6 +22,20 @@ clients = {}
 def get_online_users():
     with blue_lock:
         return [clients[addr]['username'] for addr in clients]
+    
+
+def send_private_message(sender_address, recipient_address,message):
+    with blue_lock:
+        for address, client_info in clients.items   ():
+            if client_info['username'] == recipient_address:
+                recipient_connection = client_info['connection']
+                private_message = f'[PRIVATE MESSAGE from {clients[sender_address]["username"]}]: {message}'
+                send_message_to_clients(recipient_connection,private_message)
+                # notification to sender that message sent (redundant)
+                # send_message_to_clients(clients[sender_address]['connection'],f'[PRIVATE MESSAGE to {recipient_address}]: {message}')
+                break
+
+    pass            
 def handle_client(connection, address):
     print(f'[NEW CONNECTION] {address} connected.')
     
@@ -51,6 +65,9 @@ def handle_client(connection, address):
             elif message == '!online':
                 online_users =", ".join(get_online_users())
                 send_message_to_clients(connection,f'Online users ({threading.active_count()-1}): {online_users}')
+            elif message.startswith('!private '):
+                recipient, private_message = message[len('!private '):].split(' ',1)
+                send_private_message(address,recipient,private_message)
             else:
                 broadcast_message(f'[{clients[address]["username"]}] said: {message}', address)
             print(f'[{address}, username = {clients[address]["username"]} ] said: {message}') # on server side 
